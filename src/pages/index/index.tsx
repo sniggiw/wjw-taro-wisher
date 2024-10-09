@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { View, Image, Swiper, SwiperItem } from "@tarojs/components";
 import { useLoad } from "@tarojs/taro";
 import "./index.scss";
+
+import { Random } from "mockjs";
 
 const CARD_TYPE = [
   "全部",
@@ -19,6 +22,22 @@ export default function Index() {
     console.log("Page loaded.");
   });
 
+  const [sort, setSort] = useState("");
+
+  const handleSort = () => {
+    if (sort === "") {
+      setSort("asc");
+    }
+
+    if (sort === "asc") {
+      setSort("desc");
+    }
+
+    if (sort === "desc") {
+      setSort("");
+    }
+  };
+
   return (
     <View className="index px-1">
       <Swiper
@@ -33,16 +52,23 @@ export default function Index() {
         {[...Array(5)].map((_, i) => {
           return (
             <SwiperItem key={i}>
-              <View className="flex items-center justify-center h-full bg-green-400">
-                {`swiper${i + 1}`}
-              </View>
+              <Image
+                src={`https://picsum.photos/id/${Random.integer(
+                  1,
+                  1000
+                )}/400/200`}
+                className="w-full h-full object-cover"
+              ></Image>
             </SwiperItem>
           );
         })}
       </Swiper>
 
-      <View className="bg-gray-600 h-20 w-full my-3 rounded-lg flex items-center justify-center">
-        banner
+      <View className="h-28 w-full my-3 rounded-lg flex items-center justify-center overflow-hidden shadow">
+        <Image
+          src={`https://picsum.photos/id/${Random.integer(1, 1000)}/500/200`}
+          className="w-full h-full object-cover"
+        ></Image>
       </View>
 
       <View className="flex justify-between items-center mb-4">
@@ -50,7 +76,21 @@ export default function Index() {
           <View>无限卡牌</View>
           <View className="absolute bottom-[-1] left-1/2 transform -translate-x-1/2 bg-green-400 w-4/5 h-1 rounded-lg"></View>
         </View>
-        <View>售价</View>
+        <View className="flex items-center gap-0.5" onClick={handleSort}>
+          <View>售价</View>
+          <View className="flex flex-col gap-0.5">
+            <View
+              className={`w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[10px] ${
+                sort === "asc" ? "border-b-green-400" : "border-b-black"
+              }`}
+            ></View>
+            <View
+              className={`w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[10px] ${
+                sort === "desc" ? "border-t-green-400" : "border-t-black"
+              }`}
+            ></View>
+          </View>
+        </View>
       </View>
 
       <View className="overflow-x-auto w-full mb-3">
@@ -67,7 +107,7 @@ export default function Index() {
           })}
         </View>
       </View>
-      
+
       <View className="grid grid-cols-2 gap-3">
         {[...Array(20)].map((_, i) => {
           return (
@@ -75,16 +115,24 @@ export default function Index() {
               key={i}
               className="border border-gray-200 rounded-lg overflow-hidden shadow"
             >
-              <View className="bg-blue-300 w-full h-48 relative">
+              <View className="w-full h-48 relative">
+                <Image
+                  src={`https://picsum.photos/id/${Random.integer(
+                    1,
+                    1000
+                  )}/48`}
+                  className="w-full h-full object-cover"
+                ></Image>
                 <View className="absolute bottom-2 right-2 bg-gray-800/80 text-white text-xs rounded-lg px-2 py-1">
-                  5张/包
+                  {Random.integer(1, 20)}张/包
                 </View>
               </View>
               <View className="p-2">
-                <View className="">晶晶奇迹</View>
-                <View className="my-1">¥ 5</View>
+                <View className="truncate">{Random.ctitle(4, 20)}</View>
+                <View className="my-1">¥{Random.integer(1, 100)}</View>
                 <View className="text-xs text-gray-400">
-                  近24小时已抽2万+张卡
+                  近{Random.integer(1, 24)}小时已抽 {Random.integer(1, 10)}{" "}
+                  万+张卡
                 </View>
               </View>
             </View>
