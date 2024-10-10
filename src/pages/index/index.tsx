@@ -1,5 +1,11 @@
 import { useState } from "react";
-import { View, Image, Swiper, SwiperItem } from "@tarojs/components";
+import {
+  View,
+  Image,
+  Swiper,
+  SwiperItem,
+  ScrollView,
+} from "@tarojs/components";
 import { useLoad } from "@tarojs/taro";
 import "./index.scss";
 
@@ -39,7 +45,16 @@ export default function Index() {
   };
 
   return (
-    <View className="index">
+    <ScrollView
+      className="scrollview"
+      style={{ height: "100vh" }}
+      scrollY
+      scrollWithAnimation
+      lowerThreshold={50}
+      onScrollToLower={() => {
+        console.log("重新请求获取更多数据");
+      }}
+    >
       {/* swiper */}
       <Swiper
         className="index-swiper bg-slate-50"
@@ -75,6 +90,7 @@ export default function Index() {
         ></Image>
       </View>
 
+      {/* sort */}
       <View className="flex justify-between items-center mb-5 px-2">
         <View className="text-xl font-light relative">
           <View>无限卡牌</View>
@@ -97,6 +113,7 @@ export default function Index() {
         </View>
       </View>
 
+      {/* card tabs */}
       <View className="overflow-x-auto w-full mb-2 px-2">
         <View className="grid grid-flow-col gap-2 auto-cols-max min-w-max">
           {CARD_TYPE.map((type, index) => {
@@ -112,8 +129,9 @@ export default function Index() {
         </View>
       </View>
 
+      {/* card list */}
       <View className="grid grid-cols-2 gap-3 px-2">
-        {[...Array(20)].map((_, i) => {
+        {[...Array(16)].map((_, i) => {
           return (
             <View
               key={i}
@@ -129,7 +147,9 @@ export default function Index() {
                 </View>
               </View>
               <View className="p-2">
-                <View className="truncate font-light">{Random.ctitle(4, 20)}</View>
+                <View className="truncate font-light">
+                  {Random.ctitle(4, 20)}
+                </View>
                 <View className="my-2">¥{Random.integer(1, 100)}</View>
                 <View className="text-xs text-gray-400">
                   近{Random.integer(1, 24)}小时已抽 {Random.integer(1, 10)}{" "}
@@ -140,6 +160,11 @@ export default function Index() {
           );
         })}
       </View>
-    </View>
+
+      {/* load more and no more */}
+      <View className="flex justify-center items-center py-10">
+        <View className="text-gray-400 text-sm">没有更多了</View>
+      </View>
+    </ScrollView>
   );
 }
