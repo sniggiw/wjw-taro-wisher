@@ -53,6 +53,12 @@ importers:
       '@tarojs/taro':
         specifier: 3.6.15-theta.0
         version: 3.6.15-theta.0(@types/react@18.3.11)(postcss@8.4.47)
+      classnames:
+        specifier: ^2.5.1
+        version: 2.5.1
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       react:
         specifier: ^18.0.0
         version: 18.3.1
@@ -81,6 +87,9 @@ importers:
       '@types/jest':
         specifier: ^29.3.1
         version: 29.5.13
+      '@types/lodash':
+        specifier: ^4.17.10
+        version: 4.17.10
       '@types/mockjs':
         specifier: ^1.0.10
         version: 1.0.10
