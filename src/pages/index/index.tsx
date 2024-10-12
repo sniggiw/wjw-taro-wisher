@@ -54,12 +54,16 @@ export default function Index() {
         }
     };
 
+    const [navTabActiveIndex, setNavTabActiveIndex] = useState(0);
+    const handleSwitchNavTab = (index: number) => {
+        setNavTabActiveIndex(index);
+    };
+
     useEffect(() => {
         createSelectorQuery()
             .select("#navTab")
             .boundingClientRect()
             .exec(function (res) {
-                console.log("@@@", res[0]);
                 setNavTabInfo(res[0]);
             });
     }, []);
@@ -156,7 +160,15 @@ export default function Index() {
                         return (
                             <View
                                 key={index}
-                                className="text-xs py-2 px-3 rounded-2xl bg-white border border-gray-200 first:bg-gray-800 first:text-green-300"
+                                className={classnames(
+                                    "text-xs py-2 px-3 rounded-2xl bg-white border border-gray-200",
+                                    index == navTabActiveIndex
+                                        ? "bg-gray-800 text-green-300"
+                                        : ""
+                                )}
+                                onClick={() => {
+                                    handleSwitchNavTab(index);
+                                }}
                             >
                                 {type}
                             </View>
