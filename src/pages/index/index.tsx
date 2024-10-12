@@ -33,14 +33,20 @@ export default function Index() {
     const handleSort = () => {
         if (sort === "") {
             setSort("asc");
+            const ascCardList = cardList.sort((a, b) => a.price - b.price);
+            setCardList([...ascCardList]);
         }
 
         if (sort === "asc") {
             setSort("desc");
+            const ascCardList = cardList.sort((a, b) => b.price - a.price);
+            setCardList([...ascCardList]);
         }
 
         if (sort === "desc") {
             setSort("");
+            const ascCardList = cardList.sort((a, b) => a.price - b.price);
+            setCardList([...ascCardList]);
         }
     };
 
@@ -87,7 +93,20 @@ export default function Index() {
 
         setTimeout(() => {
             setLoading(false);
-            setCardList([...cardList, ...newData]);
+            const newCardList = [...cardList, ...newData];
+            if (sort === "asc") {
+                const ascCardList = newCardList.sort(
+                    (a, b) => a.price - b.price
+                );
+                setCardList([...ascCardList]);
+            } else if (sort === "desc") {
+                const ascCardList = newCardList.sort(
+                    (a, b) => b.price - a.price
+                );
+                setCardList([...ascCardList]);
+            } else {
+                setCardList([...cardList, ...newData]);
+            }
         }, 500);
     };
 
