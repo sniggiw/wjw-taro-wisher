@@ -6,7 +6,7 @@ import {
     SwiperItem,
     ScrollView,
 } from "@tarojs/components";
-import { useLoad, createSelectorQuery } from "@tarojs/taro";
+import { useLoad, createSelectorQuery, pageScrollTo } from "@tarojs/taro";
 import classnames from "classnames";
 import "./index.scss";
 
@@ -46,7 +46,12 @@ export default function Index() {
 
     const [navTabFixed, setNavTabFixed] = useState(false);
     const [navTabInfo, setNavTabInfo] = useState({ top: 0, height: 0 });
+    const [showBackToTop, setShowBackToTop] = useState(false);
     const handleScroll = (e: any) => {
+        if (e.detail.scrollTop >= 400) {
+            setShowBackToTop(true);
+        }
+
         if (e.detail.scrollTop >= navTabInfo.top) {
             setNavTabFixed(true);
         } else {
@@ -59,6 +64,70 @@ export default function Index() {
         setNavTabActiveIndex(index);
     };
 
+    const [cardList, setCardList] = useState<any[]>([]);
+    const [cardTotal, setCardTotal] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const handleGetMoreCardData = () => {
+        const newData = [...Array(10)].map((_, i) => {
+            return {
+                id:
+                    i +
+                    Random.integer(1, 100) +
+                    Random.datetime("yyyy-MM-DD- HH:mm:ss"),
+                title: Random.ctitle(4, 20),
+                number: Random.integer(1, 20),
+                price: Random.integer(1, 10000),
+                img: `https://picsum.photos/id/${Random.integer(1, 100)}/44`,
+                hours: Random.integer(1, 24),
+                getNumber: Random.integer(1, 10000),
+            };
+        });
+
+        setLoading(true);
+
+        setTimeout(() => {
+            setLoading(false);
+            setCardList([...cardList, ...newData]);
+        }, 500);
+    };
+
+    const handleBackToTop = () => {
+        createSelectorQuery()
+            .select("#scrollview")
+            .node()
+            .exec((res) => {
+                const scrollView = res[0].node;
+                scrollView.scrollTo({
+                    scrollTop: 0,
+                    duration: 300,
+                });
+            });
+    };
+
+    useEffect(() => {
+        setCardList(
+            [...Array(10)].map((_, i) => {
+                return {
+                    id:
+                        i +
+                        Random.integer(1, 100) +
+                        Random.datetime("yyyy-MM-DD- HH:mm:ss"),
+                    title: Random.ctitle(4, 20),
+                    number: Random.integer(1, 20),
+                    price: Random.integer(1, 10000),
+                    img: `https://picsum.photos/id/${Random.integer(
+                        1,
+                        100
+                    )}/44`,
+                    hours: Random.integer(1, 24),
+                    getNumber: Random.integer(1, 10000),
+                };
+            })
+        );
+
+        setCardTotal(50);
+    }, []);
+
     useEffect(() => {
         createSelectorQuery()
             .select("#navTab")
@@ -70,14 +139,17 @@ export default function Index() {
 
     return (
         <ScrollView
+            id="scrollview"
             className="scrollview"
             style={{ height: "100vh" }}
             scrollY
+            enhanced={true}
             scrollWithAnimation
             onScroll={handleScroll}
             lowerThreshold={50}
             onScrollToLower={() => {
-                console.log("重新请求获取更多数据");
+                if (loading) return;
+                if (cardList.length < 50) handleGetMoreCardData();
             }}
         >
             {/* swiper */}
@@ -184,7 +256,7 @@ export default function Index() {
                     paddingTop: navTabFixed ? `${navTabInfo.height + 2}px` : 0,
                 }}
             >
-                {[...Array(16)].map((_, i) => {
+                {cardList.map((card, i) => {
                     return (
                         <View
                             key={i}
@@ -192,26 +264,21 @@ export default function Index() {
                         >
                             <View className="w-full h-44 relative">
                                 <Image
-                                    src={`https://picsum.photos/id/${Random.integer(
-                                        1,
-                                        100
-                                    )}/44`}
+                                    src={card.img}
                                     className="w-full h-full object-cover"
                                 ></Image>
                                 <View className="absolute bottom-2 right-2 bg-gray-800/80 text-white text-xs rounded-lg px-2 py-1">
-                                    {Random.integer(1, 20)}张/包
+                                    {card.number}张/包
                                 </View>
                             </View>
                             <View className="p-2">
                                 <View className="truncate font-light">
-                                    {Random.ctitle(4, 20)}
+                                    {card.title}
                                 </View>
-                                <View className="my-2">
-                                    ¥{Random.integer(1, 100)}
-                                </View>
+                                <View className="my-2">¥{card.price}</View>
                                 <View className="text-xs text-gray-400">
-                                    近{Random.integer(1, 24)}小时已抽{" "}
-                                    {Random.integer(1, 10)} 万+张卡
+                                    近{card.hours}小时已抽 {card.getNumber}{" "}
+                                    万+张卡
                                 </View>
                             </View>
                         </View>
@@ -221,8 +288,23 @@ export default function Index() {
 
             {/* load more and no more */}
             <View className="flex justify-center items-center py-10">
-                <View className="text-gray-400 text-sm">没有更多了</View>
+                {loading && (
+                    <View className="text-gray-400 text-sm">正在加载中...</View>
+                )}
+                {cardList.length == cardTotal && (
+                    <View className="text-gray-400 text-sm">没有更多了</View>
+                )}
             </View>
+
+            {/* back to top */}
+            {showBackToTop && (
+                <View
+                    className="fixed bottom-10 right-10 z-50 p-3 rounded-full bg-green-600 flex justify-center items-center text-white opacity-80"
+                    onClick={handleBackToTop}
+                >
+                    ⬆
+                </View>
+            )}
         </ScrollView>
     );
 }
